@@ -1,0 +1,518 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* next-themes writes `class="dark"` on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   ATLAS COMMERCE AI — Design Tokens
+   Primitive layer -> semantic layer -> component layer
+   ============================================================ */
+
+:root {
+  /* --- primitives (brand) --- */
+  --atlas-indigo-50: #eef2ff;
+  --atlas-indigo-100: #e0e7ff;
+  --atlas-indigo-200: #c7d2fe;
+  --atlas-indigo-300: #a5b4fc;
+  --atlas-indigo-400: #818cf8;
+  --atlas-indigo-500: #6366f1;
+  --atlas-indigo-600: #4f46e5;
+  --atlas-indigo-700: #4338ca;
+  --atlas-indigo-800: #3730a3;
+  --atlas-indigo-900: #312e81;
+
+  --atlas-cyan-300: #67e8f9;
+  --atlas-cyan-400: #22d3ee;
+  --atlas-cyan-500: #06b6d4;
+  --atlas-cyan-600: #0891b2;
+
+  --atlas-violet-400: #a78bfa;
+  --atlas-violet-500: #8b5cf6;
+
+  /* --- semantic: dark (default) --- */
+  --background: #09090b;
+  --background-elevated: #0c0c0f;
+  --surface: #18181b;
+  --surface-2: #1f1f23;
+  --surface-3: #26262b;
+  --foreground: #fafafa;
+  --muted: #a1a1aa;
+  --subtle: #71717a;
+  --border: #27272a;
+  --border-strong: #3f3f46;
+
+  --primary: #6366f1;
+  --primary-strong: #4f46e5;
+  --primary-foreground: #ffffff;
+  --accent: #06b6d4;
+  --accent-strong: #0891b2;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
+
+  --ring: #6366f1;
+
+  /* glass + depth */
+  --glass-bg: rgb(24 24 27 / 0.62);
+  --glass-border: rgb(255 255 255 / 0.07);
+  --glass-highlight: rgb(255 255 255 / 0.05);
+  --sheen: rgb(255 255 255 / 0.04);
+
+  --shadow-color: 0 0% 0%;
+
+  color-scheme: dark;
+}
+
+.light {
+  --background: #f7f7f9;
+  --background-elevated: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f4f6;
+  --surface-3: #ebebef;
+  --foreground: #0d0d12;
+  --muted: #5c5c6b;
+  --subtle: #8b8b99;
+  --border: #e4e4e9;
+  --border-strong: #d3d3db;
+
+  --primary: #4f46e5;
+  --primary-strong: #4338ca;
+  --primary-foreground: #ffffff;
+  --accent: #0891b2;
+  --accent-strong: #0e7490;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #0284c7;
+
+  --ring: #4f46e5;
+
+  --glass-bg: rgb(255 255 255 / 0.72);
+  --glass-border: rgb(9 9 11 / 0.07);
+  --glass-highlight: rgb(255 255 255 / 0.9);
+  --sheen: rgb(9 9 11 / 0.02);
+
+  --shadow-color: 240 12% 40%;
+
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-elevated: var(--background-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-ring: var(--ring);
+
+  --color-brand-50: var(--atlas-indigo-50);
+  --color-brand-100: var(--atlas-indigo-100);
+  --color-brand-200: var(--atlas-indigo-200);
+  --color-brand-300: var(--atlas-indigo-300);
+  --color-brand-400: var(--atlas-indigo-400);
+  --color-brand-500: var(--atlas-indigo-500);
+  --color-brand-600: var(--atlas-indigo-600);
+  --color-brand-700: var(--atlas-indigo-700);
+  --color-brand-800: var(--atlas-indigo-800);
+  --color-brand-900: var(--atlas-indigo-900);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  --font-alt: var(--font-manrope), var(--font-inter), sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --radius-card: 1rem;
+  --radius-panel: 1.25rem;
+
+  --shadow-glass: 0 1px 0 0 var(--glass-highlight) inset,
+    0 12px 32px -12px hsl(var(--shadow-color) / 0.55);
+  --shadow-lift: 0 24px 60px -24px hsl(var(--shadow-color) / 0.7);
+  --shadow-glow: 0 0 0 1px color-mix(in oklab, var(--primary) 32%, transparent),
+    0 8px 40px -12px color-mix(in oklab, var(--primary) 55%, transparent);
+
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-orbit: orbit 14s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-scan: scan 3.2s ease-in-out infinite;
+  --animate-draw: draw 1.4s ease-out forwards;
+  --animate-marquee: marquee 32s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-ring {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.15;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes scan {
+  0%,
+  100% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  40%,
+  60% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(120%);
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Entrance animation. Driven by CSS rather than JS so the server-rendered
+   markup is visible before hydration and stays visible if JS never runs. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--reveal-x, 0), var(--reveal-y, 12px), 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes wipe-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Only a `from` step: the `to` value is whatever the element carries inline. */
+@keyframes dash-in {
+  from {
+    stroke-dashoffset: var(--dash-from);
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--primary) 32%, transparent);
+    color: var(--foreground);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.022em;
+  }
+
+  /* scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in oklab, var(--primary) 60%, var(--border-strong));
+    background-clip: content-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--glass-border);
+}
+
+@utility glass-strong {
+  background: color-mix(in oklab, var(--surface) 88%, transparent);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--glass-border);
+}
+
+/* Premium card surface: soft inner highlight + lifted shadow.
+   `min-width: 0` stops a chart (or any wide child) from inflating the card
+   when it sits in a grid or flex track, which would push the page sideways. */
+@utility surface-card {
+  min-width: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--surface) 100%, transparent) 0%,
+    color-mix(in oklab, var(--surface) 92%, var(--background)) 100%
+  );
+  border: 1px solid var(--border);
+  box-shadow:
+    0 1px 0 0 var(--glass-highlight) inset,
+    0 1px 2px 0 hsl(var(--shadow-color) / 0.16),
+    0 12px 32px -18px hsl(var(--shadow-color) / 0.45);
+}
+
+@utility text-gradient {
+  background: linear-gradient(
+    92deg,
+    var(--foreground) 0%,
+    color-mix(in oklab, var(--foreground) 62%, var(--primary)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility text-brand-gradient {
+  background: linear-gradient(
+    92deg,
+    var(--primary) 0%,
+    var(--accent) 55%,
+    var(--atlas-violet-400) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Animated conic border used on hero / Atlas AI cards */
+@utility ring-aurora {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--aurora-angle, 0deg),
+      transparent 0deg,
+      var(--primary) 70deg,
+      var(--accent) 140deg,
+      transparent 220deg,
+      transparent 360deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: aurora-spin 6s linear infinite;
+    z-index: -1;
+  }
+}
+
+@property --aurora-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes aurora-spin {
+  to {
+    --aurora-angle: 360deg;
+  }
+}
+
+@utility grid-bg {
+  background-image:
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@utility dot-bg {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    var(--border-strong) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+}
+
+@utility reveal {
+  animation: reveal var(--reveal-duration, 0.5s) cubic-bezier(0.22, 1, 0.36, 1)
+    var(--reveal-delay, 0s) both;
+}
+
+/* Left-to-right wipe for bars. Clip-path keeps the rounded caps intact, which
+   a scaleX transform would squash. The final width stays inline, so the bar is
+   already correct in the server HTML. */
+@utility wipe-x {
+  animation: wipe-x var(--reveal-duration, 0.85s) cubic-bezier(0.22, 1, 0.36, 1)
+    var(--reveal-delay, 0s) both;
+}
+
+/* Sweeps a radial gauge from empty to its inline stroke-dashoffset. */
+@utility dash-in {
+  animation: dash-in var(--reveal-duration, 1.2s) cubic-bezier(0.22, 1, 0.36, 1)
+    var(--reveal-delay, 0s) both;
+}
+
+@utility skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--surface-3) 37%,
+    var(--surface-2) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Recharts fine-tuning */
+.recharts-cartesian-axis-tick text {
+  fill: var(--subtle);
+  font-size: 11px;
+  font-family: var(--font-sans);
+}
+
+.recharts-cartesian-grid line {
+  stroke: var(--border);
+}
+
+.recharts-curve.recharts-tooltip-cursor,
+.recharts-rectangle.recharts-tooltip-cursor {
+  fill: color-mix(in oklab, var(--primary) 8%, transparent);
+  stroke: color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+.recharts-sector:focus,
+.recharts-layer:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+.recharts-polar-grid-angle line,
+.recharts-polar-grid-concentric-polygon {
+  stroke: var(--border);
+}
+
+.recharts-polar-angle-axis-tick-value {
+  fill: var(--subtle);
+  font-size: 11px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
