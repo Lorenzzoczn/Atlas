@@ -18,7 +18,10 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+# `public/` pode não existir: o git não versiona diretório vazio, e hoje ela
+# está vazia — o favicon é gerado por src/app/icon.svg. Sem isto o COPY do
+# estágio final falha com "not found", e o erro não sugere a causa.
+RUN mkdir -p public && npm run build
 
 # ─── runtime ──────────────────────────────────────────────────────────────────
 FROM node:22-alpine AS runner
