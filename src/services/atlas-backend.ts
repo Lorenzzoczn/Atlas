@@ -233,6 +233,8 @@ export const authApi = {
     email: string;
     password: string;
     organizationName: string;
+    /** Exigido quando a instância define REGISTRATION_INVITE_CODE. */
+    inviteCode?: string;
   }) => api<AuthSession>("/auth/register", { method: "POST", body: input, anonymous: true }),
 
   me: () =>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -141,22 +142,14 @@ export function LoginView() {
             </Button>
           </form>
 
-          <div className="mt-6 rounded-xl border border-border bg-surface-2/50 p-3.5 text-center">
-            <p className="text-[11.5px] leading-relaxed text-subtle">
-              Ainda não tem conta nesta instância? Crie a primeira pelo endpoint{" "}
-              <code className="font-mono">POST /auth/register</code> — ela nasce como
-              proprietária da organização.
-            </p>
-          </div>
-
-          <p className="mt-6 text-center text-[12.5px] text-muted">
+          <p className="mt-8 text-center text-[12.5px] text-muted">
             Ainda não tem conta?{" "}
-            <button
-              type="button"
+            <Link
+              href="/cadastro"
               className="font-medium text-primary transition-colors hover:text-primary-strong"
             >
-              Fale com o time comercial
-            </button>
+              Criar conta
+            </Link>
           </p>
         </Reveal>
       </div>
