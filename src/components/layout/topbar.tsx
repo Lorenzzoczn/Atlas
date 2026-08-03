@@ -19,7 +19,6 @@ import { cn } from "@/lib/utils";
 import { navItemByHref } from "@/config/navigation";
 import { useAuth } from "@/providers/auth-provider";
 import { useUi, rangeLabels, type DateRangeKey } from "@/store/ui-store";
-import { sessionUser } from "@/mock/session";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -48,7 +47,11 @@ const RANGE_OPTIONS: { value: DateRangeKey; label: string }[] = [
 export function Topbar() {
   const pathname = usePathname();
   const { setMobileNavOpen, range, setRange, privacyMode, togglePrivacy } = useUi();
-  const { signOut } = useAuth();
+  const { signOut, user, organization } = useAuth();
+
+  // Antes de `/auth/me` responder não há nome. O Avatar deriva as iniciais do
+  // que receber, então um traço evita piscar as iniciais de outra pessoa.
+  const nomeExibido = user?.name ?? "—";
 
   const current = navItemByHref.get(pathname);
   const crumbs = [
@@ -136,24 +139,26 @@ export function Topbar() {
               className="ml-0.5 rounded-full outline-none ring-offset-2 ring-offset-background transition-shadow hover:ring-2 hover:ring-primary/40"
               aria-label="Menu do usuário"
             >
-              <Avatar name={sessionUser.name} hue={sessionUser.avatarHue} size="md" />
+              <Avatar name={nomeExibido} size="md" />
             </button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-60">
             <DropdownMenuLabel>Conta</DropdownMenuLabel>
             <div className="flex items-center gap-3 px-2.5 pb-2.5 pt-1">
-              <Avatar name={sessionUser.name} hue={sessionUser.avatarHue} size="md" />
+              <Avatar name={nomeExibido} size="md" />
               <div className="min-w-0">
-                <p className="truncate text-[13px] font-medium">{sessionUser.name}</p>
-                <p className="truncate text-[11px] text-subtle">{sessionUser.email}</p>
+                <p className="truncate text-[13px] font-medium">{nomeExibido}</p>
+                <p className="truncate text-[11px] text-subtle">{user?.email ?? ""}</p>
               </div>
             </div>
-            <div className="px-2.5 pb-2">
-              <Badge tone="brand" size="sm">
-                Plano {sessionUser.plan}
-              </Badge>
-            </div>
+            {organization?.name && (
+              <div className="px-2.5 pb-2">
+                <Badge tone="brand" size="sm">
+                  {organization.name}
+                </Badge>
+              </div>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/perfil">

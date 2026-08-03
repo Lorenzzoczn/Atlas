@@ -246,6 +246,14 @@ export const authApi = {
       roleKey: string;
       isOwner: boolean;
       permissions: string[];
+      organization: {
+        id: string;
+        name: string;
+        slug: string;
+        plan: string;
+        trialEndsAt: string | null;
+        connectedChannels: number;
+      } | null;
     }>("/auth/me"),
 
   logout: () => api<void>("/auth/logout", { method: "POST" }),

@@ -32,6 +32,8 @@ type AuthStatus = "carregando" | "autenticado" | "visitante";
 interface AuthState {
   user: AuthUser | null;
   organization: AuthOrganization | null;
+  /** Canais de venda conectados. Alimenta o cabeçalho sem uma segunda chamada. */
+  connectedChannels: number;
   permissions: string[];
   status: AuthStatus;
   error: string | null;
@@ -136,13 +138,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       organization: data
         ? {
             id: data.organizationId,
-            name: "",
-            slug: "",
-            plan: "",
+            name: data.organization?.name ?? "",
+            slug: data.organization?.slug ?? "",
+            plan: data.organization?.plan ?? "",
             roleKey: data.roleKey,
             isOwner: data.isOwner,
           }
         : null,
+      connectedChannels: data?.organization?.connectedChannels ?? 0,
       permissions,
       status,
       error,
