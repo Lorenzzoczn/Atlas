@@ -203,7 +203,7 @@ export const faqItems = [
   {
     question: "Os dados exibidos nesta versão são reais?",
     answer:
-      "Não. Esta é a fase de interface do Atlas Commerce AI: toda a informação vem de uma camada de dados simulados, gerada de forma determinística para que o comportamento visual seja idêntico a cada carregamento.",
+      "Não. Esta é a fase de interface do Atlas Commerce: toda a informação vem de uma camada de dados simulados, gerada de forma determinística para que o comportamento visual seja idêntico a cada carregamento.",
   },
   {
     question: "Como o lucro líquido é calculado?",

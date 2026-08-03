@@ -1,4 +1,4 @@
-# Atlas Commerce AI
+# Atlas Commerce
 
 **Inteligência que impulsiona cada venda.**
 

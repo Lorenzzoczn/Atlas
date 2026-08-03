@@ -1,10 +1,10 @@
 export const siteConfig = {
-  name: "Atlas Commerce AI",
+  name: "Atlas Commerce",
   shortName: "Atlas",
   tagline: "Inteligência que impulsiona cada venda.",
   description:
     "Plataforma de inteligência comercial para vendedores de marketplaces: pedidos, margem, estoque, concorrência e automações em um só lugar.",
-  url: "https://atlas-commerce.ai",
+  url: "https://atlascommerce.com.br",
   locale: "pt-BR",
 } as const;
 

@@ -16,7 +16,9 @@ import { siteConfig } from "@/config/site";
 
 const loginSchema = z.object({
   email: z.string().email("Informe um e-mail válido"),
-  password: z.string().min(6, "A senha precisa ter ao menos 6 caracteres"),
+  // O backend exige 10; validar aqui com o mesmo piso evita uma ida à rede
+  // para receber a mesma recusa.
+  password: z.string().min(10, "A senha precisa ter ao menos 10 caracteres"),
 });
 
 type LoginForm = z.infer<typeof loginSchema>;
@@ -49,10 +51,14 @@ export function LoginView() {
     formState: { errors, isSubmitting },
   } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "lorenzzo@atlas-commerce.ai", password: "atlas2026" },
+    defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = (values: LoginForm) => signIn(values.email, values.password);
+  const onSubmit = async (values: LoginForm) => {
+    // O provider já guarda a mensagem de erro para exibição; aqui só evitamos
+    // que a rejeição vire "unhandled".
+    await signIn(values.email, values.password).catch(() => undefined);
+  };
 
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
@@ -137,8 +143,9 @@ export function LoginView() {
 
           <div className="mt-6 rounded-xl border border-border bg-surface-2/50 p-3.5 text-center">
             <p className="text-[11.5px] leading-relaxed text-subtle">
-              Ambiente de demonstração. As credenciais já vêm preenchidas — qualquer
-              senha com 6 ou mais caracteres é aceita.
+              Ainda não tem conta nesta instância? Crie a primeira pelo endpoint{" "}
+              <code className="font-mono">POST /auth/register</code> — ela nasce como
+              proprietária da organização.
             </p>
           </div>
 

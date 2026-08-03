@@ -53,7 +53,7 @@ export function AtlasMark({
       viewBox="0 0 40 40"
       fill="none"
       role="img"
-      aria-label="Atlas Commerce AI"
+      aria-label="Atlas Commerce"
       className={cn("shrink-0 overflow-visible", className)}
     >
       <defs>

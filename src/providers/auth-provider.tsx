@@ -5,78 +5,152 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import { sessionUser, type SessionUser } from "@/mock/session";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ApiError } from "@/lib/api-client";
+import {
+  authApi,
+  type AuthOrganization,
+  type AuthSession,
+  type AuthUser,
+} from "@/services/atlas-backend";
 import {
   getServerSession,
   getSession,
   setSession,
   subscribeToSession,
+  toStoredSession,
 } from "@/store/session-store";
 
-type AuthStatus = "autenticado" | "visitante";
+type AuthStatus = "carregando" | "autenticado" | "visitante";
 
 interface AuthState {
-  user: SessionUser | null;
+  user: AuthUser | null;
+  organization: AuthOrganization | null;
+  permissions: string[];
   status: AuthStatus;
+  error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
-  error: string | null;
+  can: (permission: string) => boolean;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
 
 /**
- * Simulated authentication. There is no backend in this phase: the session is a
- * flag in localStorage and any password with 6 or more characters is accepted.
+ * Autenticação real contra o backend.
+ *
+ * O par de tokens vive em `session-store` (fora do React, lido por
+ * `useSyncExternalStore`), e os dados do usuário vêm de `/auth/me` — assim uma
+ * sessão retomada de outra aba já chega com permissões corretas, sem depender
+ * do que estava em memória.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [email, setEmail] = useState(sessionUser.email);
+  const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
 
-  const active = useSyncExternalStore(
-    subscribeToSession,
-    getSession,
-    getServerSession,
-  );
+  const session = useSyncExternalStore(subscribeToSession, getSession, getServerSession);
+
+  /**
+   * Na hidratação o snapshot ainda é o do servidor — sempre `null`, porque o
+   * servidor não vê o localStorage. Sem esta trava o primeiro efeito do
+   * AuthGuard já leria "visitante" e chutaria para o login quem estava logado.
+   */
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
+  // Só consulta quando há token; sem ele o usuário é visitante e nada é pedido.
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["auth", "me", session?.accessToken?.slice(-12)],
+    queryFn: authApi.me,
+    enabled: Boolean(session),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const signIn = useCallback(
-    async (nextEmail: string, password: string) => {
+    async (email: string, password: string) => {
       setError(null);
-
-      if (password.length < 6) {
-        setError("A senha precisa ter ao menos 6 caracteres.");
-        return;
+      try {
+        const result: AuthSession = await authApi.login(email, password);
+        setSession(toStoredSession(result.tokens));
+        // Descarta cache da sessão anterior: outra organização, outros dados.
+        queryClient.clear();
+        router.push("/");
+      } catch (cause) {
+        const message =
+          cause instanceof ApiError
+            ? cause.message
+            : "Não foi possível entrar. Tente novamente.";
+        setError(message);
+        throw cause;
       }
-
-      await new Promise((resolve) => setTimeout(resolve, 900));
-
-      setEmail(nextEmail || sessionUser.email);
-      setSession(true);
-      router.push("/");
     },
-    [router],
+    [queryClient, router],
   );
 
   const signOut = useCallback(() => {
-    setSession(false);
+    // Avisa o servidor para revogar a sessão, mas não espera: se a rede
+    // falhar, o usuário ainda precisa sair da interface.
+    void authApi.logout().catch(() => undefined);
+    setSession(null);
+    queryClient.clear();
     router.push("/login");
-  }, [router]);
+  }, [queryClient, router]);
+
+  const status: AuthStatus = !hydrated
+    ? "carregando"
+    : !session
+      ? "visitante"
+      : isLoading
+        ? "carregando"
+        : isError
+          ? "visitante"
+          : "autenticado";
+
+  const permissions = useMemo(() => data?.permissions ?? [], [data]);
+
+  const can = useCallback(
+    (permission: string) => data?.isOwner === true || permissions.includes(permission),
+    [data, permissions],
+  );
 
   const value = useMemo<AuthState>(
     () => ({
-      user: active ? { ...sessionUser, email } : null,
-      status: active ? "autenticado" : "visitante",
+      user: data
+        ? {
+            id: data.userId,
+            name: data.name,
+            email: data.email,
+            avatarUrl: null,
+            emailVerified: true,
+            mfaEnabled: false,
+          }
+        : null,
+      organization: data
+        ? {
+            id: data.organizationId,
+            name: "",
+            slug: "",
+            plan: "",
+            roleKey: data.roleKey,
+            isOwner: data.isOwner,
+          }
+        : null,
+      permissions,
+      status,
+      error,
       signIn,
       signOut,
-      error,
+      can,
     }),
-    [active, email, signIn, signOut, error],
+    [data, permissions, status, error, signIn, signOut, can],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

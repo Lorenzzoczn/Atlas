@@ -160,7 +160,7 @@ export function SettingsView() {
                 </Select>
               </Field>
               <Field label="E-mail financeiro">
-                <Input defaultValue="financeiro@atlas-commerce.ai" type="email" />
+                <Input defaultValue="financeiro@atlascommerce.com.br" type="email" />
               </Field>
               <Field label="Fuso horário">
                 <Select defaultValue="sp">
